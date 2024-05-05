@@ -1,44 +1,41 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 using System.Threading;
 using Cysharp.Threading.Tasks;
-abstract class ButtonPanel : MonoBehaviour
+using TMPro;
+class ButtonPanel : MonoBehaviour
 {
-	public Button[] buttons;
-
-	public bool cancellable = true;
+	public GameObject selfPanel;
+	public GameObject prevPanel;
 	public EventSystem eventSystem;
-	public GameObject firstSelectedButton;
-	private CancellationToken playerCancellationToken;
-	protected CancellationTokenSource linkedCancellationTokenSource;
-	public abstract UniTask<int> AwaitAnyButtonClickedAsync(CancellationToken cancellationToken);
-	public async UniTask<int> AwaitAnyButtonClickOrCancelAsync(CancellationToken systemCancellationToken)
-	{
-		playerCancellationToken = new CancellationTokenSource().Token;
-		linkedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource (systemCancellationToken, playerCancellationToken);
 
-		eventSystem.SetSelectedGameObject(firstSelectedButton);
-
-		return await AwaitAnyButtonClickedAsync(linkedCancellationTokenSource.Token);
-	}
 	void Update()
 	{
-		if (cancellable && (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Cancel")))
+		if (Input.GetKeyDown(KeyCode.Escape) || Input.GetButtonDown("Fire2"))
 		{
-			Debug.Log("キャンセル");
-			Debug.Log("[" + this.GetType().FullName + "] " + System.Reflection.MethodBase.GetCurrentMethod().Name);
-			Debug.Log(linkedCancellationTokenSource);
-			linkedCancellationTokenSource?.Cancel();
-			linkedCancellationTokenSource = null;
+			Cancel();
 		}
+	}
 
-		// https://hakonebox.hatenablog.com/entry/2018/04/15/125152
-		float dph = Input.GetAxis ("D_Pad_H");
-		float dpv = Input.GetAxis ("D_Pad_V");
-		if(( dph != 0 ) || ( dpv != 0 )){
-				Debug.Log ("D Pad:"+dph+","+dpv );
-		}
+
+	public void Cancel()
+	{
+		Debug.Log("キャンセル");
+		ToggleGroupInherit toggleGroup = prevPanel.GetComponent<ToggleGroupInherit>();
+		// 操作不能にしていたパネルのトグルを復活させる
+		toggleGroup.SetAllTogglesEnable(true);
+		// 選択していたものがOn状態のままでは困るのでOffにする
+		Toggle selected = toggleGroup.ActiveToggles().FirstOrDefault();
+		selected.isOn = false;
+		// eventSystemで前のパネルの選択状態を復元
+		// ここでeventSystemを操作しないと十字キーとかで動かせなくなる
+		eventSystem.SetSelectedGameObject(selected.gameObject);
+		// このパネルを非表示にする
+		selfPanel.SetActive(false);
 	}
 }

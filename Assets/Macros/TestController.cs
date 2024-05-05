@@ -6,30 +6,35 @@ using System;
 class TestController : MonoBehaviour
 {
 
-	public Canvas selectActionPanel;
+	public GameObject selectActionPanel;
+	public GameObject selectSkillPanel;
+	public GameObject selectItemPanel;
+	public GameObject selectTargetEnemyPanel;
+	public GameObject selectTargetAllyPanel;
+	// public GameObject selectActionPanel;
 	private SelectActionPanel selectActionPanelComponent;
+	private SelectSkillPanel selectSkillPanelComponent;
 	private CancellationToken systemCancellationToken;
 
 	void Start()
 	{
-		selectActionPanelComponent = selectActionPanel.GetComponent<SelectActionPanel>();
+		// selectActionPanelComponent = selectActionPanel.GetComponent<SelectActionPanel>();
+		// selectSkillPanelComponent = selectSkillPanel.GetComponent<SelectSkillPanel>();
 
-		selectAction();
+		// selectAction();
 	}
 
-	private async void selectAction()
-	{
-		systemCancellationToken = this.GetCancellationTokenOnDestroy();
-		try
-		{
-			selectActionPanel.enabled = true;
-			await selectActionPanelComponent.AwaitAnyButtonClickedAsync(systemCancellationToken);
-			selectActionPanel.enabled = false;
-		}
-		catch (OperationCanceledException ex)
-		{
-			// https://learn.microsoft.com/ja-jp/dotnet/api/system.operationcanceledexception?view=net-8.0
-			// しかし別にException使わないんだけどな
-		}
+	public void receiveAction(){
+		Debug.Log("レシーブ");
+		string action = selectActionPanel.GetComponent<ToggleGroupInherit>().getValue();
+		string skill = selectSkillPanel.GetComponent<ToggleGroupInherit>()?.getValue();
+		string item = selectItemPanel.GetComponent<ToggleGroupInherit>()?.getValue();
+		string enemy = selectTargetEnemyPanel.GetComponent<ToggleGroupInherit>()?.getValue();
+		string ally = selectTargetAllyPanel.GetComponent<ToggleGroupInherit>()?.getValue();
+		Debug.Log("action: " + action);
+		Debug.Log("skill: " + skill);
+		Debug.Log("item: " + item);
+		Debug.Log("enemy: " + enemy);
+		Debug.Log("ally: " + ally);
 	}
 }
