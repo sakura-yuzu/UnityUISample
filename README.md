@@ -28,5 +28,5 @@ Making some UI for Unity.
 Made with [contrib.rocks](https://contrib.rocks).
 
 ## License / ライセンス
-This project is licensed under the MIT License - see the LICENSE.md file for details  
-このプロジェクトは MIT ライセンスの元にライセンスされています。 詳細はLICENSE.mdをご覧ください。
+This project is licensed under the Apache-2.0 license - see the LICENSE.md file for details  
+このプロジェクトは Apache-2.0 licenseの元にライセンスされています。 詳細はLICENSE.mdをご覧ください。
